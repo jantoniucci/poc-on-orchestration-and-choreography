@@ -36,6 +36,54 @@ Pre-requisites:
 * [install](https://kafka.apache.org/quickstart) Apache Kafka 
 
 Clone the repo
+
 ```
 git clone https://github.com/jantoniucci/poc-on-orchestration-and-choreography.git
+cd poc-on-orchestration-and-choreography
 ```
+
+Run a full build
+
+```
+mvn install
+```
+
+At your Kafka's home directory, start zookeeper
+
+```
+bin/zookeeper-server-start.sh config/zookeeper.properties
+```
+
+start kafka
+
+```
+bin/kafka-server-start.sh config/server.properties
+```
+
+create a topic *"retail"*
+
+```
+bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic retail
+```
+
+Check existing topics
+
+```
+bin/kafka-topics.sh --list --zookeeper localhost:2181
+```
+
+Start the microservices components one by one
+   
+```
+mvn -f checkout exec:java
+mvn -f inventory exec:java
+mvn -f monitor exec:java
+mvn -f order exec:java
+mvn -f payment exec:java
+mvn -f shipping exec:java
+```
+
+Now you can place an order via [http://localhost:8090](http://localhost:8090)
+You can inspect Order via [http://localhost:8091](http://localhost:8091)
+You can inspect Payment via [http://localhost:8092](http://localhost:8092)
+You can inspect all events going on via [http://localhost:8095](http://localhost:8095)
